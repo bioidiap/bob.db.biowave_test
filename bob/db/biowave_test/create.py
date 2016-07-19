@@ -429,7 +429,7 @@ def add_command(subparsers):
   parser.add_argument('-R', '--recreate', action='store_true', help="If set, I'll first erase the current database")
   parser.add_argument('-v', '--verbose', action='count', help="Do SQL operations in a verbose way?")
   parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/user/onikisins/Databases/BIOWAVE/Database_25_04_2016/', help="Change the relative path to the directory containing the images of the BIOWAVE database.")
-  parser.add_argument('-e', '--evalfile', metavar='DIR', default='/idiap/home/onikisins/Desktop/Christopher_code/evalSetGenuine.txt', help="Change the path and file name containing the evaluate group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
-  parser.add_argument('-d', '--devfile', metavar='DIR', default='/idiap/home/onikisins/Desktop/Christopher_code/devSetGenuine.txt', help="Change the path and file name containing the develop group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
+  parser.add_argument('-e', '--evalfile', metavar='DIR', default='/idiap/user/onikisins/Python/Christopher_code/evalSetGenuine.txt', help="Change the path and file name containing the evaluate group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
+  parser.add_argument('-d', '--devfile', metavar='DIR', default='/idiap/user/onikisins/Python/Christopher_code/devSetGenuine.txt', help="Change the path and file name containing the develop group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
   
   parser.set_defaults(func=create) #action
