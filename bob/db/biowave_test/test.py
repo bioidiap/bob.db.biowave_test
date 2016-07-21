@@ -35,7 +35,7 @@ def db_available(test):
     if os.path.exists(dbfile):
       return test(*args, **kwargs)
     else:
-      raise SkipTest("The database file '%s' is not available; did you forget to run 'bob_dbmanage.py %s create' ?" % (dbfile, 'biowave'))
+      raise SkipTest("The database file '%s' is not available; did you forget to run 'bob_dbmanage.py %s create' ?" % (dbfile, 'biowave_test'))
 
   return wrapper
 
@@ -137,5 +137,5 @@ def test_driver_api():
   assert main('biowave_test dumplist --self-test'.split()) == 0
   assert main('biowave_test dumplist --protocol=all --group=dev --purpose=enroll --client=1 --self-test'.split()) == 0
   assert main('biowave_test checkfiles --self-test'.split()) == 0
-  assert main('biowave_test reverse Person_01/Left/BioPic_20160425_11433 --self-test'.split()) == 0
+  assert main('biowave_test reverse Person_01/Left/BioPic_20160425_114336 --self-test'.split()) == 0
   assert main('biowave_test path 2 --self-test'.split()) == 0
