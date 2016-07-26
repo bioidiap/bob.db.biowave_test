@@ -139,3 +139,4 @@ def test_driver_api():
   assert main('biowave_test checkfiles --self-test'.split()) == 0
   assert main('biowave_test reverse Person_01/Left/BioPic_20160425_114336 --self-test'.split()) == 0
   assert main('biowave_test path 2 --self-test'.split()) == 0
+  assert main('biowave_test download --force'.split()) == 0
