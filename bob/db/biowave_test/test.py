@@ -132,7 +132,6 @@ def test_objects():
 
 @db_available
 def test_driver_api():
-  None
   from bob.db.base.script.dbmanage import main
   assert main('biowave_test dumplist --self-test'.split()) == 0
   assert main('biowave_test dumplist --protocol=all --group=dev --purpose=enroll --client=1 --self-test'.split()) == 0
@@ -140,3 +139,5 @@ def test_driver_api():
   assert main('biowave_test reverse Person_01/Left/BioPic_20160425_114336 --self-test'.split()) == 0
   assert main('biowave_test path 2 --self-test'.split()) == 0
   assert main('biowave_test download --force'.split()) == 0
+
+
