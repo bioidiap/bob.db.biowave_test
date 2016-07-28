@@ -285,9 +285,9 @@ def add_protocols(session, devfile, evalfile, verbose):
       for file_to_add in files_to_add:
           print(file_to_add)
 	  try:
-            f = session.query(File).filter(File.path == file_to_add).one()
+              f = session.query(File).filter(File.path == file_to_add).one()
 	  except MultipleResultsFound:
-	    raise DatabaseError("Multiple files correspond to a single dev / eval file list entry, aborting building database protocols.")
+	      raise DatabaseError("Multiple files correspond to a single dev / eval file list entry, aborting building database protocols.")
           if verbose > 1:
             print("    Adding to the protocol Client's {} file {}...".format(f.client_id, f.path))
           
