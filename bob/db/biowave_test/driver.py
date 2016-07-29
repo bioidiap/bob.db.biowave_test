@@ -163,7 +163,7 @@ class Interface(BaseInterface):
 
     # the "checkfiles" action
     parser = subparsers.add_parser('checkfiles', help=checkfiles.__doc__)
-    parser.add_argument('-d', '--directory', default='/idiap/user/onikisins/Databases/BIOWAVE/Database_25_04_2016/', help="if given, this path will be prepended to every entry returned.")
+    parser.add_argument('-d', '--directory', default='/idiap/project/biowave/biowave_test/database/', help="if given, this path will be prepended to every entry returned.")
     parser.add_argument('-e', '--extension', default='.png', help="if given, this extension will be appended to every entry returned.")
     parser.add_argument('--self-test', dest="selftest", action='store_true', help=argparse.SUPPRESS)
     parser.set_defaults(func=checkfiles) #action
@@ -176,7 +176,7 @@ class Interface(BaseInterface):
 
     # adds the "path" command
     parser = subparsers.add_parser('path', help=path.__doc__)
-    parser.add_argument('-d', '--directory', default='/idiap/user/onikisins/Databases/BIOWAVE/Database_25_04_2016/', help="if given, this path will be prepended to every entry returned.")
+    parser.add_argument('-d', '--directory', default='/idiap/project/biowave/biowave_test/database/', help="if given, this path will be prepended to every entry returned.")
     parser.add_argument('-e', '--extension', default='.png', help="if given, this extension will be appended to every entry returned.")
     parser.add_argument('id', nargs='+', type=int, help="one or more file ids to look up. If you provide more than one, files which cannot be found will be omitted from the output. If you provide a single id to lookup, an error message will be printed if the id does not exist in the database. The exit status will be non-zero in such case.")
     parser.add_argument('--self-test', dest="selftest", action='store_true', help=argparse.SUPPRESS)

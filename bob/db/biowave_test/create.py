@@ -32,30 +32,6 @@ class DatabaseError(Exception):
     def __str__(self):
         return self.value
 
-#def __get_info_from_file__(path):
-#    """
-#    function, that returns parameters from the file path.
-#    Careful -- no file extension!
-#    
-#    Example:
-#    path = "/idiap/home/teglitis/Desktop/Database/biowave/Person 004/Left/S01/A01/004_M_L_S01_A01_1"
-#    
-#    [client, gender, hand, session, attempt, image_no] =\
-#    __get_info_from_file__(path)
-#    
-#    print("client = {}, gender = {}, hand = {}, session = {}, attempt = {},\
-#    image_no = {}". format(client, gender, hand, session, attempt, image_no))
-#    """
-#    import re
-#    filename = os.path.basename(path)
-#    filename = filename.split("_")
-#    original_client_id = int(filename[0])
-#    gender = (filename[1])
-#    hand   = (filename[2])
-#    session = int(re.findall("[-+]?\d+[\.]?\d*", filename[3])[0])
-#    attempt = int(re.findall("[-+]?\d+[\.]?\d*", filename[4])[0])
-#    image_no = int(filename[5])
-#    return original_client_id, gender, hand, session, attempt, image_no
 def __get_filelist__(filelist_path):
     with open(filelist_path, 'r') as content_file:
         content = content_file.read()
@@ -146,40 +122,8 @@ def add_clients(session, imagedir, verbose):
                   image_full_path = os.path.join(person_hand_session_folder_path, image)
                   image_short_path = os.path.relpath(image_full_path, imagedir)
                   image_short_path, _ = os.path.splitext(image_short_path)
-                  if verbose>1: print("    Adding file '{}'...".format(image_short_path))                
+                  if verbose>1: print("    Adding file '{}'...".format(image_short_path))
                   session.add(File(c.id, image_short_path))
-                  
-#def add_annotations(session, annotdir, verbose):
-#  """
-#  Reads annotation files of the BIOWAVE database and stores the annotations in the sql database.
-#  All annotation files must be located in the annotdir
-#  WITH THE SAME FILE STRUCTURE AS FOR THE ORIGINAL DATABASE.  
-#  """
-#  def annotate_file(session, file_path):
-#      if file_path.endswith('_annotation'):
-#          file_path_short = file_path[:-11]
-#      f_id = session.query(File.id).filter(File.path == file_path_short).first()
-#      if f_id == None:
-#          raise DatabaseError("Doesn't exist annotation file's original file.\nAnnotation file path -- {}\n File path that was searched -- {}".format(file_path, file_path_short))
-#      if verbose>1: print("Adding anotation to file ID {} -- anotations path -- {}".format(f_id[0], file_path))
-#      session.add(Annotation(f_id[0], file_path))
-#
-#  session.flush()
-#  file_paths = set()
-#  for dir_, _, files in os.walk(annotdir):
-#      for fileName in files:
-#          relDir = os.path.relpath(dir_, annotdir)
-#          if relDir == ".":
-#              file_paths.add(os.path.splitext(fileName)[0])
-#          else:
-#              relFile = os.path.join(relDir, fileName)
-#              relFile, _ = os.path.splitext(relFile)
-#              file_paths.add(relFile)
-#  # no need for set anymore, convert to list:
-#  file_paths = list(file_paths)
-#  for file_path in file_paths:
-#      annotate_file(session, file_path)
-
 
 def add_protocols(session, devfile, evalfile, verbose):
   """
@@ -196,50 +140,6 @@ def add_protocols(session, devfile, evalfile, verbose):
   is rised.
     
   """
-  #verbose = args.verbose
-#  import random
-#  # 0 there we devide database in to the subsets.
-#  PROC_WORLD_MULT_SES = 50
-#  PROC_SMALL_WORLD = 20
-
-#  q1 = session.query(File.client_id, File.session).group_by(File.client_id).group_by(File.session).subquery()
-    
-#  one_pers_list     = []
-#  mult_pers_list    = []
-#  
-#  for c, count in session.query(q1.c.client_id, q1.c.session).group_by(q1.c.client_id):
-#      if int(count) == 1:
-#          one_pers_list.append(c)
-#      else:
-#          mult_pers_list.append(c)
-#          
-#          
-#  
-#  random.seed(1)
-#  random.shuffle(mult_pers_list)
-#  world_dev_pers_list_count = int(round((len(mult_pers_list) * PROC_WORLD_MULT_SES) / 100.))
-#  
-#  world_dev_pers_list    = mult_pers_list[0:world_dev_pers_list_count]
-#  eval_pers_list         = mult_pers_list[world_dev_pers_list_count:]    
-#   
-#  random.seed(2)
-#  random.shuffle(one_pers_list) 
-#  
-#  small_one_pers_count = int(round((len(one_pers_list) * PROC_SMALL_WORLD) / 100.))
-#  small_mult_pers_count = int(round((len(world_dev_pers_list) * PROC_SMALL_WORLD) / 100.))
-  
-  # 1. DEFINITIONS  
-#  protocol_person_definitions = {}
-#  world_all     = one_pers_list[0:small_one_pers_count] + world_dev_pers_list[0:small_mult_pers_count]
-#  dev_all       = []
-#  eval_all      = []
-#  protocol_person_definitions['small'] = [world_all, dev_all, eval_all]
-  
-  #world_all     = one_pers_list[small_one_pers_count:] + world_dev_pers_list[small_mult_pers_count:]
-  
-  
-  
-  
   dev_enroll, dev_probe     = __get_filelist__(devfile)
   bad = __test_filelist_for_dublicates__(dev_enroll, dev_probe)
   if bad != 0:
@@ -284,100 +184,17 @@ def add_protocols(session, devfile, evalfile, verbose):
       files_to_add = protocol_person_definitions[proto][key]
       for file_to_add in files_to_add:
           print(file_to_add)
-	  try:
-            f = session.query(File).filter(File.path == file_to_add).one()
-	  except MultipleResultsFound:
-	    raise DatabaseError("Multiple files correspond to a single dev / eval file list entry, aborting building database protocols.")
+          try:
+              f = session.query(File).filter(File.path == file_to_add).one()
+          except MultipleResultsFound:
+              raise DatabaseError("Multiple files correspond to a single dev / eval file list entry, aborting building database protocols.")
           if verbose > 1:
             print("    Adding to the protocol Client's {} file {}...".format(f.client_id, f.path))
           
           # adding file to the protocol purpose:                    
           prot_purp.files.append(f)
-#      
-#      
-#      
-#      
-#      if(key == 0):
-#          clients_to_add = protocol_person_definitions[proto][0]
-#          for c in clients_to_add:
-#              for f in session.query(File).filter(File.client_id == c):
-#                  if verbose > 1:
-#                      print("    Adding to the protocol Client's {} file {}...".format(f.client_id, f.path))
-#                  prot_purp.files.append(f)
-#      elif(key == 1 or key == 2):
-#          clients_to_add = protocol_person_definitions[proto][1]
-#          # to make script more simple, we will add files later
-#      elif(key == 3 or key == 4):
-#          clients_to_add = protocol_person_definitions[proto][2]
-#          # to make script more simple, we will add files later
-#          
-#      if (key == 1 or key == 3):
-#          # adding just 1st session:
-#          for c in clients_to_add:
-#              for f in session.query(File).filter(File.client_id == c).filter(File.session == 1):
-#                  if verbose > 1:
-#                      print("    Adding to the protocol Client's {} file {}...".format(f.client_id, f.path))
-#                  prot_purp.files.append(f)
-#      elif (key == 2 or key == 4):
-#          # adding both 2nd and 3rd sessions:
-#          for c in clients_to_add:
-#              for f in session.query(File).filter(File.client_id == c).filter(or_(File.session == 2, File.session == 3)):
-#                  if verbose > 1: 
-#                      print("    Adding to the protocol Client's {} file {}...".format(f.client_id, f.path))
-#                  prot_purp.files.append(f)
 
   session.commit()
-#  if verbose > 1:
-#      print("\n\n")
-#      print("--- Summary of clients added to groups /purposes ---")
-#      print("   [displayed Client.id's]")
-#      print("Persons:")
-#      print("One session       = {}".format(one_pers_list))
-#      print("Multiple sessions = {}".format(mult_pers_list))
-#      print("---------------------------------------------")
-#      print("Persons with only 1 session are added to the 'world' data set \n(devided between 'large' and 'small' protocol):")
-#      print("Protocol 'small' --- {}".format(one_pers_list[0:small_one_pers_count]))
-#      print("Protocol 'large' --- {}".format(one_pers_list[small_one_pers_count:]))
-#      print("---------------------------------------------")
-#      print("Persons with multiple sessions are devided in 2 parts for different \npurposes:")
-#      print("For world / dev data set -- {}".format(world_dev_pers_list))
-#      print("For eval data set -- {}".format(eval_pers_list))
-#      print("---------------------------------------------")
-#      print("Multiple person  world / dev set is devided for protocols 'small' \nand 'large':")
-#      print("World/dev -- small -- {}".format(world_dev_pers_list[0:small_mult_pers_count]))
-#      print("World/dev -- large -- {}".format(world_dev_pers_list[small_mult_pers_count:]))
-#      print("---------------------------------------------")
-#      print("In summary -- persons for each protocol / group:")
-#      print("---------------------------------------------")
-#      print("protocol          SMALL:")
-#      print("World -- {}".format((one_pers_list[0:small_one_pers_count] + world_dev_pers_list[0:small_mult_pers_count])))
-#      print("Dev   -- empty")
-#      print("Eval  -- empty")
-#      print("---------------------------------------------")
-#      print("protocol          LARGE:")
-#      print("World -- {}".format((one_pers_list[small_one_pers_count:] + world_dev_pers_list[small_mult_pers_count:])))
-#      print("Dev   -- {}".format(world_dev_pers_list[small_mult_pers_count:]))
-#      print("Eval  -- {}".format(eval_pers_list))
-#      print("\n\n")
-#      print("As enroll data are used session Nr - 1 data")
-#      print("As probe data are used session Nr - 2 and 3 data")
-#      print("")      
-#      print("Now we can count for files in each  protocol:")
-#      print("---------------------------------------------")
-#      print("protocol          SMALL:")
-#      x = session.query(File).filter(File.client_id.in_(one_pers_list[0:small_one_pers_count] + world_dev_pers_list[0:small_mult_pers_count])).all()
-#      print("World -- {}, enroll -- 0, probe -- 0".format(len(x)))
-#      print("Dev: train -- 0, enroll -- 0, probe -- 0")
-#      print("Eval: train -- 0, enroll -- 0, probe -- 0")
-#      print("---------------------------------------------")
-#      print("protocol          LARGE:")
-#      print("World: train -- {}, enroll -- 0, probe -- 0".format(session.query(File).filter(File.client_id.in_(one_pers_list[small_one_pers_count:] + world_dev_pers_list[small_mult_pers_count:])).count()))
-#      print("Dev: train -- 0, enroll -- {}, probe -- {}".format(session.query(File).filter(File.client_id.in_(world_dev_pers_list[small_mult_pers_count:])).filter(File.session.in_(["1"])).count(),\
-#      session.query(File).filter(File.client_id.in_(world_dev_pers_list[small_mult_pers_count:])).filter(File.session.in_(["2", "3"])).count()))
-#      print("Eval: train -- 0, enroll -- {}, probe -- {}".format(session.query(File).filter(File.client_id.in_(eval_pers_list)).filter(File.session.in_(["1"])).count(),\
-#      session.query(File).filter(File.client_id.in_(eval_pers_list)).filter(File.session.in_(["2","3"])).count()))
-#      print("---------------------------------------------")
-#      print("---------------------------------------------")
 
 
 def create_tables(args):
@@ -428,8 +245,8 @@ def add_command(subparsers):
 
   parser.add_argument('-R', '--recreate', action='store_true', help="If set, I'll first erase the current database")
   parser.add_argument('-v', '--verbose', action='count', help="Do SQL operations in a verbose way?")
-  parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/user/onikisins/Databases/BIOWAVE/Database_25_04_2016/', help="Change the relative path to the directory containing the images of the BIOWAVE database.")
-  parser.add_argument('-e', '--evalfile', metavar='DIR', default='/idiap/user/onikisins/Python/Christopher_code/evalSetGenuine.txt', help="Change the path and file name containing the evaluate group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
-  parser.add_argument('-d', '--devfile', metavar='DIR', default='/idiap/user/onikisins/Python/Christopher_code/devSetGenuine.txt', help="Change the path and file name containing the develop group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
+  parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/project/biowave/biowave_test/database/', help="Change the relative path to the directory containing the images of the BIOWAVE database.")
+  parser.add_argument('-e', '--evalfile', metavar='DIR', default='/idiap/project/biowave/biowave_test/evalSetGenuine.txt', help="Change the path and file name containing the evaluate group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
+  parser.add_argument('-d', '--devfile', metavar='DIR', default='/idiap/project/biowave/biowave_test/devSetGenuine.txt', help="Change the path and file name containing the develop group's file list of the BIOWAVE_TEST database (defaults to %(default)s)")
   
   parser.set_defaults(func=create) #action
