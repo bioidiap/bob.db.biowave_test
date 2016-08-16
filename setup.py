@@ -32,12 +32,12 @@ setup(
 
     name='bob.db.biowave_test',
     version=version,
-    description='BIOWAVE test Database Access API for Bob',
-    #url='https://github.com/bioidiap/bob.db.xm2vts',
-    license='GPLv3',
+    description='BioWave Test Database Access API for Bob',
+    url='https://gitlab.idiap.ch/bob/bob.db.biowave_test',
+    license='BSD',
     author='Teodors Eglitis',
     author_email='teodors.eglitis@idiap.ch',
-    keywords='vein recognition, bob, bob.db, BIOWAVE, BIOWAVE_test, palm, wrist, vein, vascular biometrics',
+    keywords='vein recognition, bob, bob.db, BioWave, Test, palm, wrist, vein, vascular biometrics',
     long_description=open('README.rst').read(),
 
     # This line is required for any distutils based packaging.
@@ -46,10 +46,6 @@ setup(
     zip_safe=False,
 
     install_requires = install_requires,
-
-
-
-
 
     entry_points = {
       # bob database declaration
@@ -65,7 +61,7 @@ setup(
       'Intended Audience :: Developers',
       'Intended Audience :: Education',
       'Intended Audience :: Science/Research',
-      'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+      'License :: OSI Approved :: BSD License',
       'Natural Language :: English',
       'Programming Language :: Python',
       'Programming Language :: Python :: 3',
