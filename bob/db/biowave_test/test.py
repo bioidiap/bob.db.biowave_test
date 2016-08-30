@@ -56,11 +56,19 @@ def test_clients():
   assert len(db.clients(hands = ["R", "L"])) == 40
   assert len(db.clients(hands = "L")) == 20
   assert len(db.clients(hands = "R"))   == 20
+  assert len(db.clients(hands = "L", protocol = 'all'))   == 20
+  assert len(db.clients(hands = "R", protocol = 'all'))   == 20
+  assert len(db.clients(hands = "R", protocol = 'all', groups = 'dev')) == 0
+  assert len(db.clients(hands = "R", protocol = 'all', groups = 'eval')) == 20
+  assert len(db.clients(hands = "L", protocol = 'all', groups = 'dev')) == 20
+  assert len(db.clients(hands = "L", protocol = 'all', groups = 'eval')) == 0
   
   assert len(db.models()) == 40
   assert len(db.models(hands = ["R", "L"])) == 40
   assert len(db.models(hands = "L")) == 20
   assert len(db.models(hands = "R"))   == 20
+  assert len(db.models(groups='dev'))   == 20
+  assert len(db.models(groups='eval'))   == 20
   
 @db_available
 def test_objects():

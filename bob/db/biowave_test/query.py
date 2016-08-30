@@ -111,7 +111,7 @@ class Database(bob.db.base.SQLiteDatabase):
   ## end of help methods ######################################################
   #############################################################################
 
-  def clients(self, hands = None):
+  def clients(self, hands = None, protocol=None, groups=None):
     """Returns a list of :py:class:`.Client` for the specific query by the user.
        Clients correspond to the BIOWAVE database CLIENT entries -- each entry 
        represents a person's hand.
@@ -121,24 +121,37 @@ class Database(bob.db.base.SQLiteDatabase):
    
     hands
         client's hand -- L (left), R (right) -- each database's client entry is 
-        a person's one hand -- in this way databases entry count is doubled.    
+        a person's one hand -- in this way databases entry count is doubled.
+
+    protocol
+      BIOWAVE_TEST database has only 1 protocol -- 'all'.
+
+    groups
+      One of the groups ('dev', 'eval') or a tuple with several of them.
+      If 'None' is given (this is the default), it is considered the same as a
+      tuple with all possible values.
     
     Returns: A list containing all the clients which have the given hand choise.
     """
 
-    #genders = self.check_parameters_for_validity(genders, "gender", self.client_genders())
     hands = self.check_parameters_for_validity(hands, "hand", self.client_hands())
+    protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
+    groups = self.check_parameters_for_validity(groups, "group", self.groups())
     
-    # List of the clients
-    q = self.query(Client)
-#    if genders:
-#      q = q.filter(Client.gender.in_(genders))
-    if hands:
-      q = q.filter(Client.hand.in_(hands))   
-    q = q.order_by(Client.id)
-    return list(q)
     
-  def models(self, hands = None):
+    # Now query the database
+    retval = []
+    for k in groups:
+        q = self.query(Client).join(File).join(ProtocolPurpose, File.protocolPurposes).\
+            join(Protocol).filter(Protocol.name.in_(protocol)).\
+            filter(ProtocolPurpose.sgroup == k)
+        if hands:
+            q = q.filter(Client.hand.in_(hands))
+            q = q.order_by(Client.id)
+        retval += list(q)
+    return retval
+    
+  def models(self, hands = None, protocol=None, groups=None):
     """Returns a list of :py:class:`.Client` for the specific query by the user.
        Models correspond to Clients for the BIOWAVE TEST database.
 
@@ -147,14 +160,21 @@ class Database(bob.db.base.SQLiteDatabase):
     
     hands
         client's hand -- L (left), R (right) -- each database's client entry is 
-        a person's one hand -- in this way databases entry count is doubled.    
+        a person's one hand -- in this way databases entry count is doubled.
     
-    Returns: A list containing all the clients which have the given hand choise.
+    protocol
+      BIOWAVE_TEST database has only 1 protocol -- 'all'.
+      
+    groups
+      One of the groups ('dev', 'eval') or a tuple with several of them.
+      If 'None' is given (this is the default), it is considered the same as a
+      tuple with all possible values.
+    
+    Returns: A list containing all the clients which have the given parameters.
     """
-
-    return self.clients(hands)
+    return self.clients(hands, protocol, groups)
     
-  def model_ids(self, hands = None):
+  def model_ids(self, hands = None, protocol=None, groups=None):
     """Returns a list of model ids for the specific query by the user.
        Models correspond to the BIOWAVE database CLIENT entries -- each entry 
        represents a person's hand.
@@ -164,11 +184,19 @@ class Database(bob.db.base.SQLiteDatabase):
     hands
         client's hand -- L (left), R (right) -- each database's client entry is 
         a person's one hand -- in this way databases entries are doubled.    
-    
-    Returns: A list containing all the client ids having the given hand choises.
+
+    protocol
+      BIOWAVE_TEST database has only 1 protocol -- 'all'.
+
+    groups
+      One of the groups ('dev', 'eval') or a tuple with several of them.
+      If 'None' is given (this is the default), it is considered the same as a
+      tuple with all possible values.
+      
+    Returns: A list containing all the client ids having the given choises.
     """
       
-    return [client.id for client in self.clients(hands)]
+    return [client.id for client in self.clients(hands, protocol, groups)]
 
   def has_client_id(self, id):
     """Returns True if in the BIOWAVE database is a client with a certain integer 
@@ -241,38 +269,3 @@ class Database(bob.db.base.SQLiteDatabase):
         
         
     return list(set(retval)) # To remove duplicates
-
-#  def annotation(self, file):
-#    """Returns the annotation for the given BIOWAVE database file object.
-#
-#    Keyword Parameters:
-#
-#    file
-#      The ``File`` object to retrieve the annotations for.
-#
-#    Returns: the ``Annotations`` object for the given ``file`` object, if 
-#    such object exists.
-#    """
-#
-#    self.assert_validity()
-#    # return the annotations as returned by the call function of the Annotation object
-#    return file.annotation
-#
-#  def annotations_path(self, file):
-#    """Returns the annotation's path for a given for the given BIOWAVE database 
-#       file object. If there is no anotation, ``None`` is returned
-#       
-#    Keyword Parameters:
-#
-#    file
-#      The ``File`` object to retrieve the annotations for.
-#
-#    Returns: the path as string object for the given ``file`` annotation, if there
-#    exist one. Else ``None`` is returned.
-#    """
-#
-#    self.assert_validity()
-#    if file.annotation != None:
-#        return str(file.annotation.path)
-#    else:
-#        return None
