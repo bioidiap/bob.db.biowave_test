@@ -165,7 +165,8 @@ def test_objects():
   temp2_ids = []
   for m in temp2:
     temp2_ids.append(m.id)
-  temp2.sort()
+  temp2_ids = list(set(temp2_ids))
+  temp2_ids.sort()
   assert temp1_ids == temp2_ids
 
 
