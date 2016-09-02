@@ -151,39 +151,40 @@ class Database(bob.db.base.SQLiteDatabase):
         retval += list(q)
     return retval
     
-  def models(self, hands = None, protocol=None, groups=None):
-    """Returns a list of :py:class:`.Client` for the specific query by the user.
-       Models correspond to Clients for the BIOWAVE TEST database.
-
-    Keyword Parameters:
-    
-    
-    hands
-        client's hand -- L (left), R (right) -- each database's client entry is 
-        a person's one hand -- in this way databases entry count is doubled.
-    
-    protocol
-      BIOWAVE_TEST database has only 1 protocol -- 'all'.
-      
-    groups
-      One of the groups ('dev', 'eval') or a tuple with several of them.
-      If 'None' is given (this is the default), it is considered the same as a
-      tuple with all possible values.
-    
-    Returns: A list containing all the clients which have the given parameters.
-    """
-    return self.clients(hands, protocol, groups)
+#  def models(self, hands = None, protocol=None, groups=None):
+#    """Returns a list of :py:class:`.Client` for the specific query by the user.
+#       Models correspond to Clients for the BIOWAVE TEST database.
+#
+#    Keyword Parameters:
+#    
+#    
+#    hands
+#        client's hand -- L (left), R (right) -- each database's client entry is 
+#        a person's one hand -- in this way databases entry count is doubled.
+#    
+#    protocol
+#      BIOWAVE_TEST database has only 1 protocol -- 'all'.
+#      
+#    groups
+#      One of the groups ('dev', 'eval') or a tuple with several of them.
+#      If 'None' is given (this is the default), it is considered the same as a
+#      tuple with all possible values.
+#    
+#    Returns: A list containing all the clients which have the given parameters.
+#    """
+#    return self.clients(hands, protocol, groups)
     
   def model_ids(self, hands = None, protocol=None, groups=None):
     """Returns a list of model ids for the specific query by the user.
-       Models correspond to the BIOWAVE database CLIENT entries -- each entry 
-       represents a person's hand.
+       For this database the MODEL ids coresponds to the files, because multiple
+       each person's hand (client) images in ENROLL data set are tested against
+       ALL files (images) in the PROBE data set.
 
     Keyword Parameters:
     
     hands
         client's hand -- L (left), R (right) -- each database's client entry is 
-        a person's one hand -- in this way databases entries are doubled.    
+        a person's one hand -- in this way database entries are doubled.    
 
     protocol
       BIOWAVE_TEST database has only 1 protocol -- 'all'.
@@ -193,10 +194,23 @@ class Database(bob.db.base.SQLiteDatabase):
       If 'None' is given (this is the default), it is considered the same as a
       tuple with all possible values.
       
-    Returns: A list containing all the client ids having the given choises.
+    Returns: A list containing all the model_ids having the given choises.
     """
       
-    return [client.id for client in self.clients(hands, protocol, groups)]
+
+    protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
+    groups = self.check_parameters_for_validity(groups, "group", self.groups())
+    
+    retval = []
+
+    for k in groups:
+        q = self.query(File).join((ProtocolPurpose, File.protocolPurposes)).join(Protocol).\
+            filter(Protocol.name.in_(protocol)).filter(ProtocolPurpose.sgroup == k).\
+            filter(ProtocolPurpose.purpose == 'enroll').order_by('id')
+            
+        retval += list(q)
+
+    return list(set([k.model_id for k in retval])) # To remove duplicates
 
   def has_client_id(self, id):
     """Returns True if in the BIOWAVE database is a client with a certain integer 
@@ -210,6 +224,14 @@ class Database(bob.db.base.SQLiteDatabase):
     an error if that does not exist."""
 
     return self.query(Client).filter(Client.id==id).one()
+    
+    
+
+  def image_name_from_model_id(self, model_id):
+    """Returns the unique image name in the database given a ``model_id``"""
+
+    return self.query(File).filter(File.model_id==model_id).one().unique_file_name
+
 
   def objects(self, protocol=None, groups=None, purposes=None, model_ids=None):
     """Returns a list of :py:class:`.File` for the specific query by the user.
@@ -232,9 +254,12 @@ class Database(bob.db.base.SQLiteDatabase):
       the only one purpose for this group.
 
     model_ids
-      Only retrieves the files for the provided list of model ids (claimed
-      BIOWAVE database client id). The model ids are string.  If 'None' is given (this is
-      the default), no filter over the model_ids is performed.
+      Only retrieves the files for the provided list of model ids The model ids
+      are string.  If 'None' is given (this is the default), no filter over the
+      model_ids is performed.
+      Be careful - model ID correspont to the ENROLL data set objects (files),
+      don't try to make a specific 'probe' data set queris using the model ids 
+      - in any way entire probe data set will be returned.
     
     Returns: A list of :py:class:`.File` objects.
     """
@@ -249,11 +274,16 @@ class Database(bob.db.base.SQLiteDatabase):
 #    im_numbers = self.check_parameters_for_validity(im_numbers, "attempt", self.file_im_numbers()) 
 
 
-    import collections
-    if(model_ids is None):
-      model_ids = ()
-    elif(not isinstance(model_ids,collections.Iterable)):
-      model_ids = (model_ids,)
+    # if only asking for 'probes', then ignore model_ids as all of our
+    # protocols do a full probe-model scan
+    if purposes and len(purposes) == 1 and 'probe' in purposes:
+      model_ids = None
+
+
+    if model_ids:
+      valid_model_ids = self.model_ids(hands = None, protocol=protocol, groups=groups)
+      model_ids = self.check_parameters_for_validity(model_ids, "model_ids",
+          valid_model_ids)
 
     # Now query the database
     retval = []
@@ -263,7 +293,8 @@ class Database(bob.db.base.SQLiteDatabase):
             filter(Protocol.name.in_(protocol)).filter(ProtocolPurpose.sgroup == k).\
             filter(ProtocolPurpose.purpose.in_(purposes))
         if model_ids:
-          q = q.filter(File.client_id.in_(model_ids))
+#          q = q.filter(File.client_id.in_(model_ids))
+           q = q.filter(File.model_id.in_(model_ids))
         q = q.order_by(File.client_id)
         retval += list(q)    
         

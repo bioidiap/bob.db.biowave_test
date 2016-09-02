@@ -102,6 +102,7 @@ def add_clients(session, imagedir, verbose):
           person_hand_images = os.listdir(person_hand_session_folder_path)
           person_hand_images = filter(lambda image: image.endswith(".png") == True, person_hand_images)
           person_hand_images = list(set(person_hand_images))
+          person_hand_images.sort()
           if len(person_hand_images) >= 5:
               if person_hand.startswith("R") == True:
                   hand = "R"
@@ -118,12 +119,17 @@ def add_clients(session, imagedir, verbose):
               session.commit()             
               c = session.query(Client).filter(Client.original_client_id == original_client_id).filter(Client.hand == hand).first()
 
-              for image in person_hand_images:
+              for nr, image in enumerate(person_hand_images, start=1):
                   image_full_path = os.path.join(person_hand_session_folder_path, image)
                   image_short_path = os.path.relpath(image_full_path, imagedir)
                   image_short_path, _ = os.path.splitext(image_short_path)
                   if verbose>1: print("    Adding file '{}'...".format(image_short_path))
-                  session.add(File(c.id, image_short_path))
+                  M = session.query(File).filter(File.model_id == "c_{}_i_{}".format(c.id,nr)).first()
+                  if M:
+                      raise DatabaseError("\n\nAlready exist file's with such MODEL_ID. Possibly SQL database already exist. Please try using command:\n\n     ./bin/bob_dbmanage.py database_test create -R \n")
+                  else:
+                      session.add(File(c.id, image_short_path, nr))
+                  
 
 def add_protocols(session, devfile, evalfile, verbose):
   """
