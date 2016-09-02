@@ -145,11 +145,13 @@ def test_objects():
     temp1_ids.append(m.unique_file_name)
   temp1_ids = list(set(temp1_ids))
   temp1_ids.sort()
+  
   temp2 = db.clients(protocol = 'all', groups = 'dev')
   temp2_ids = []
   for m in temp2:
     temp2_ids.append(m.id)
-  temp2.sort()
+  temp2_ids = list(set(temp2_ids))
+  temp2_ids.sort()
   assert temp1_ids == temp2_ids
   
   
