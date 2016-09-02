@@ -63,12 +63,12 @@ def test_clients():
   assert len(db.clients(hands = "L", protocol = 'all', groups = 'dev')) == 20
   assert len(db.clients(hands = "L", protocol = 'all', groups = 'eval')) == 0
   
-  assert len(db.models()) == 40
-  assert len(db.models(hands = ["R", "L"])) == 40
-  assert len(db.models(hands = "L")) == 20
-  assert len(db.models(hands = "R"))   == 20
-  assert len(db.models(groups='dev'))   == 20
-  assert len(db.models(groups='eval'))   == 20
+  #assert len(db.models()) == 40
+  #assert len(db.models(hands = ["R", "L"])) == 40
+  #assert len(db.models(hands = "L")) == 20
+  #assert len(db.models(hands = "R"))   == 20
+  #assert len(db.models(groups='dev'))   == 20
+  #assert len(db.models(groups='eval'))   == 20
   
 @db_available
 def test_objects():
@@ -102,47 +102,78 @@ def test_objects():
   assert len(db.objects(groups = 'eval', purposes = 'enroll')) == 40
   assert len(db.objects(groups = 'eval', purposes = 'probe')) == 60
 
-  assert len(db.objects(protocol = 'all', model_ids = [1])) == 5
-  assert len(db.objects(protocol = 'all', model_ids = [1], purposes = 'enroll')) == 2
-  assert len(db.objects(protocol = 'all', model_ids = [1], purposes = 'probe')) == 3
+  assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"])) == 1
+  assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"], purposes = 'enroll')) == 1
+  assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"], purposes = 'probe')) == 120
 
-  assert len(db.objects(protocol = 'all', model_ids = [1], groups = 'eval')) == 0
-  assert len(db.objects(protocol = 'all', model_ids = [1], groups = 'dev')) == 5
+  #test is removed, because now valuse is checked with model_ids values in the current group
+  #assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"], groups = 'eval')) == 0
+  assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"], groups = 'dev')) == 1
 
-  assert len(db.objects(protocol = 'all', model_ids = [1], groups = 'dev', purposes = 'enroll')) == 2
-  assert len(db.objects(protocol = 'all', model_ids = [1], groups = 'dev', purposes = 'probe')) == 3
+  assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"], groups = 'dev', purposes = 'enroll')) == 1
+  assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"], groups = 'dev', purposes = 'probe')) == 60
 
-  assert len(db.objects(model_ids = [1])) == 5
-  assert len(db.objects(model_ids = [1], purposes = 'enroll')) == 2
-  assert len(db.objects(model_ids = [1], purposes = 'probe')) == 3
+  assert len(db.objects(model_ids = ["c_1_i_1"])) == 1
+  assert len(db.objects(model_ids = ["c_1_i_1"], purposes = 'enroll')) == 1
+  assert len(db.objects(model_ids = ["c_1_i_1"], purposes = 'probe')) == 120
 
-  assert len(db.objects(model_ids = [1], groups = 'eval')) == 0
-  assert len(db.objects(model_ids = [1], groups = 'dev')) == 5
+  #test is removed, because now valuse is checked with model_ids values in the current group  
+  #assert len(db.objects(model_ids = ["c_1_i_1"], groups = 'eval')) == 0
+  assert len(db.objects(model_ids = ["c_1_i_1"], groups = 'dev')) == 1
 
-  assert len(db.objects(model_ids = [1], groups = 'dev', purposes = 'enroll')) == 2
-  assert len(db.objects(model_ids = [1], groups = 'dev', purposes = 'probe')) == 3
+  assert len(db.objects(model_ids = ["c_1_i_1"], groups = 'dev', purposes = 'enroll')) == 1
+  assert len(db.objects(model_ids = ["c_1_i_1"], groups = 'dev', purposes = 'probe')) == 60
 
-  assert len(db.objects(protocol = 'all', model_ids = [2], groups = 'eval')) == 5
-  assert len(db.objects(protocol = 'all', model_ids = [2], groups = 'dev')) == 0
-  assert len(db.objects(protocol = 'all', model_ids = [2], groups = 'eval', purposes = 'enroll')) == 2
-  assert len(db.objects(protocol = 'all', model_ids = [2], groups = 'eval', purposes = 'probe')) == 3
+  assert len(db.objects(protocol = 'all', model_ids = ["c_2_i_2"], groups = 'eval')) == 1
+  #test is removed, because now valuse is checked with model_ids values in the current group
+  #assert len(db.objects(protocol = 'all', model_ids = ["c_1_i_1"], groups = 'dev')) == 0
+  assert len(db.objects(protocol = 'all', model_ids = ["c_2_i_2"], groups = 'eval', purposes = 'enroll')) == 1
+  assert len(db.objects(protocol = 'all', model_ids = ["c_2_i_2"], groups = 'eval', purposes = 'probe')) == 60
 
-  assert len(db.objects(model_ids = [1,2,3,4,5])) == 25
-  assert len(db.objects(model_ids = [6,7,8,9,10])) == 25
-  assert len(db.objects(model_ids = [11,12,13,14,15])) == 25
-  assert len(db.objects(model_ids = [16,17,18,19,20])) == 25
+  assert len(db.objects(model_ids = ["c_1_i_1","c_2_i_1","c_3_i_1","c_4_i_1","c_5_i_1"])) == 5
+  assert len(db.objects(model_ids = ["c_6_i_1","c_7_i_1","c_8_i_1","c_9_i_1","c_10_i_1"])) == 5
+  assert len(db.objects(model_ids = ["c_11_i_1","c_12_i_1","c_13_i_1","c_14_i_1","c_15_i_1"])) == 5
+  
+  assert db.objects(model_ids = ["c_1_i_1"])[0].unique_file_name == 1
+  assert db.objects(model_ids = ["c_1_i_2"])[0].unique_file_name == 1
+  assert db.objects(model_ids = ["c_40_i_1"])[0].unique_file_name == 40
+  assert db.objects(model_ids = ["c_40_i_2"])[0].unique_file_name == 40
+  
+  temp1 = db.objects(model_ids = ["c_7_i_1"], groups = 'dev', purposes='probe')
+  temp1_ids = []
+  for m in temp1:
+    temp1_ids.append(m.unique_file_name)
+  temp1_ids = list(set(temp1_ids))
+  temp1_ids.sort()
+  temp2 = db.clients(protocol = 'all', groups = 'dev')
+  temp2_ids = []
+  for m in temp2:
+    temp2_ids.append(m.id)
+  temp2.sort()
+  assert temp1_ids == temp2_ids
+  
+  
+  temp1 = db.objects(model_ids = ["c_38_i_2"], groups = 'eval', purposes='probe')
+  temp1_ids = []
+  for m in temp1:
+    temp1_ids.append(m.unique_file_name)
+  temp1_ids = list(set(temp1_ids))
+  temp1_ids.sort()
+  temp2 = db.clients(protocol = 'all', groups = 'eval')
+  temp2_ids = []
+  for m in temp2:
+    temp2_ids.append(m.id)
+  temp2.sort()
+  assert temp1_ids == temp2_ids
 
-  assert len(db.objects(protocol = 'all', model_ids = [1,2,3,4,5])) == 25
-  assert len(db.objects(protocol = 'all', model_ids = [6,7,8,9,10])) == 25
-  assert len(db.objects(protocol = 'all', model_ids = [11,12,13,14,15])) == 25
-  assert len(db.objects(protocol = 'all', model_ids = [16,17,18,19,20])) == 25
 
 
 @db_available
 def test_driver_api():
   from bob.db.base.script.dbmanage import main
   assert main('biowave_test dumplist --self-test'.split()) == 0
-  assert main('biowave_test dumplist --protocol=all --group=dev --purpose=enroll --client=1 --self-test'.split()) == 0
+  assert main('biowave_test dumplist --protocol=all --group=dev --purpose=enroll --self-test'.split()) == 0
+  assert main('biowave_test dumplist --protocol=all --group=dev --purpose=enroll --models=c_7_i_1 --self-test'.split()) == 0
   assert main('biowave_test checkfiles --self-test'.split()) == 0
   assert main('biowave_test reverse Person_01/Left/BioPic_20160425_114336 --self-test'.split()) == 0
   assert main('biowave_test path 2 --self-test'.split()) == 0

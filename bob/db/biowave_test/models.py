@@ -89,13 +89,20 @@ class File(Base, bob.db.base.File):
   client = relationship("Client", backref=backref("files", order_by=id))
   # For Python: A direct link to the annotation object that file belongs to this file:
   #annotation = relationship("Annotation", backref=backref("file", order_by=id, uselist=False), uselist=False)
+  
+  # this column is not really required as it can be computed from other
+  # information already in the database, it is only an optimisation to allow us
+  # to quickly filter files by ``model_id``
+  model_id = Column(String(9), unique=True)
+  
 
-  def __init__(self, client_id, path): # , f_session, f_attempt, f_image_no
+  def __init__(self, client_id, path, nr): # , f_session, f_attempt, f_image_no
     # call base class constructor, client ID - SQL table ID;
     # path - A relative path, which includes file name but excludes file extension
     # Because this is an SQL database, you SHOULD NOT assign the file_id
     bob.db.base.File.__init__(self, path = path)
     self.client_id = client_id
+    self.model_id = "c_{}_i_{}".format(client_id,nr)
 #    self.session = f_session
 #    self.attempt = f_attempt
 #    self.image_no = f_image_no
@@ -103,6 +110,13 @@ class File(Base, bob.db.base.File):
   def __repr__(self):
     return "\nFile(assigned SQL id = {}, Client id = {}, path = {})"\
     .format(self.id, self.client_id, self.path)
+  
+  @property
+  def unique_file_name(self):
+    """Unique name for a given file (image) in the database"""
+
+    return self.client_id
+
   
 #class Annotation(Base):
 #  """
