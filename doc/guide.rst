@@ -1,6 +1,6 @@
 .. vim: set fileencoding=utf-8 :
-.. @author: Manuel Guenther <Manuel.Guenther@idiap.ch>
-.. @date:   Thu Dec  6 12:28:25 CET 2012
+.. @author: Teodors Eglitis <teodors.eglitis@idiap.ch>
+.. @date:   Fri  2 Sep 14:55:40 CEST 2016
 
 ==============
  User's Guide
@@ -14,10 +14,6 @@ The actual raw data for the BIOWAVE_ database should be downloaded from the orig
 The Database Interface
 ----------------------
 
-The :py:class:`bob.db.biowave.Database` complies with the standard biometric verification database as described in :ref:`commons`, implementing the interface :py:class:`bob.db.verification.utils.SQLiteDatabase`.
+tbd.
 
-.. todo::
-   Explain the particularities of the :py:class:`bob.db.biowave.Database`.
-
-
-.. _bob: https://www.idiap.ch/software/bob
+_bob: https://www.idiap.ch/software/bob
