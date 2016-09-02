@@ -112,7 +112,7 @@ class File(Base, bob.db.base.File):
     .format(self.id, self.client_id, self.path)
   
   @property
-  def unique_file_name(self):
+  def get_client_id(self):
     """Unique name for a given file (image) in the database"""
 
     return self.client_id

@@ -227,10 +227,10 @@ class Database(bob.db.base.SQLiteDatabase):
     
     
 
-  def image_name_from_model_id(self, model_id):
+  def client_id_from_model_id(self, model_id):
     """Returns the unique image name in the database given a ``model_id``"""
 
-    return self.query(File).filter(File.model_id==model_id).one().unique_file_name
+    return self.query(File).filter(File.model_id==model_id).one().get_client_id
 
 
   def objects(self, protocol=None, groups=None, purposes=None, model_ids=None):

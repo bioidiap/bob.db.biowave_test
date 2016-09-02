@@ -134,15 +134,15 @@ def test_objects():
   assert len(db.objects(model_ids = ["c_6_i_1","c_7_i_1","c_8_i_1","c_9_i_1","c_10_i_1"])) == 5
   assert len(db.objects(model_ids = ["c_11_i_1","c_12_i_1","c_13_i_1","c_14_i_1","c_15_i_1"])) == 5
   
-  assert db.objects(model_ids = ["c_1_i_1"])[0].unique_file_name == 1
-  assert db.objects(model_ids = ["c_1_i_2"])[0].unique_file_name == 1
-  assert db.objects(model_ids = ["c_40_i_1"])[0].unique_file_name == 40
-  assert db.objects(model_ids = ["c_40_i_2"])[0].unique_file_name == 40
+  assert db.objects(model_ids = ["c_1_i_1"])[0].get_client_id == 1
+  assert db.objects(model_ids = ["c_1_i_2"])[0].get_client_id == 1
+  assert db.objects(model_ids = ["c_40_i_1"])[0].get_client_id == 40
+  assert db.objects(model_ids = ["c_40_i_2"])[0].get_client_id == 40
   
   temp1 = db.objects(model_ids = ["c_7_i_1"], groups = 'dev', purposes='probe')
   temp1_ids = []
   for m in temp1:
-    temp1_ids.append(m.unique_file_name)
+    temp1_ids.append(m.get_client_id)
   temp1_ids = list(set(temp1_ids))
   temp1_ids.sort()
   
@@ -158,7 +158,7 @@ def test_objects():
   temp1 = db.objects(model_ids = ["c_38_i_2"], groups = 'eval', purposes='probe')
   temp1_ids = []
   for m in temp1:
-    temp1_ids.append(m.unique_file_name)
+    temp1_ids.append(m.get_client_id)
   temp1_ids = list(set(temp1_ids))
   temp1_ids.sort()
   temp2 = db.clients(protocol = 'all', groups = 'eval')
