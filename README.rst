@@ -21,9 +21,8 @@
 
 This package is part of the signal-processing and machine learning toolbox
 Bob_. It contains the *low level* interface for the evaluation protocol of the
-**BioWave Test** database (dependant only on the *bob\_db\_base*). This package
-does not contain the original **BioWave Test** data files, which need to be
-obtained seperatly.
+**BioWave Test** database. This package does not contain the original **BioWave
+Test** data files, which need to be obtained seperatly.
 
 
 Installation
