@@ -15,4 +15,5 @@ The Database Interface
 
 tbd.
 
-_bob: https://www.idiap.ch/software/bob
+.. your references go here
+.. _bob: https://www.idiap.ch/software/bob
