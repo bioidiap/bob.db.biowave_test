@@ -1,8 +1,5 @@
-.. vim: set fileencoding=utf-8 :
-.. Laurent El Shafey <laurent.el-shafey@idiap.ch>
+=======================
+ BIOWAVE Test Database
+=======================
 
-=================
- BIOWAVE Database
-=================
-
-.. automodule:: bob.db.biowave
+.. automodule:: bob.db.biowave_test
