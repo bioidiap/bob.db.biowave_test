@@ -1,12 +1,10 @@
 .. vim: set fileencoding=utf-8 :
-.. @author: Manuel Guenther <Manuel.Guenther@idiap.ch>
-.. @date:   Tue Aug 26 09:42:18 CEST 2014
 
-.. _bob.db.biowave:
+.. _bob.db.biowave_test:
 
-========================================
- BIOWAVE Database Verification Protocols
-========================================
+==============================================
+ BIOWAVE Test Database Verification Protocols
+==============================================
 
 .. todolist::
 
