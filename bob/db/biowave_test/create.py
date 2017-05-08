@@ -111,7 +111,7 @@ def add_clients(session, imagedir, verbose):
                   if verbose>1: print("    Adding file '{}'...".format(image_short_path))
                   M = session.query(File).filter(File.model_id == "c_{}_i_{}".format(c.id,nr)).first()
                   if M:
-                      raise DatabaseError("\n\nAlready exist file's with such MODEL_ID. Possibly SQL database already exist. Please try using command:\n\n     ./bin/bob_dbmanage.py database_test create -R \n")
+                      raise DatabaseError("\n\nAlready exist file's with such MODEL_ID. Possibly SQL database already exist. Please try using command:\n\n     bob_dbmanage.py database_test create -R \n")
                   else:
                       session.add(File(c.id, image_short_path, nr))
 
